@@ -1,24 +1,40 @@
 const mongoose = require('mongoose');
 
 const meetingHistory = new mongoose.Schema({
-    agenda: { type: String, required: true },
-    attendes: [{
+    title: { 
+        type: String, 
+        required: true 
+    },
+    description: { 
+        type: String 
+    },
+    startDate: { 
+        type: Date, 
+        required: true 
+    },
+    endDate: { 
+        type: Date, 
+        required: true 
+    },
+    location: { 
+        type: String 
+    },
+    meetingLink: { 
+        type: String 
+    },
+    participants: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Contact',
+        ref: 'User'
     }],
-    attendesLead: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Lead',
-    }],
-    location: String,
-    related: String,
-    dateTime: String,
-    notes: String,
-    // meetingReminders: { type: String, required: true },
+    status: { 
+        type: String, 
+        enum: ['scheduled', 'completed', 'cancelled'],
+        default: 'scheduled'
+    },
     createBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        require: true,
+        required: true,
     },
     timestamp: {
         type: Date,
@@ -27,7 +43,7 @@ const meetingHistory = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false,
-    },
+    }
 })
 
 module.exports = mongoose.model('Meetings', meetingHistory, 'Meetings');

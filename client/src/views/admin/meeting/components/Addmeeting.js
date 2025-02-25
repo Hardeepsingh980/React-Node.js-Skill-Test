@@ -58,7 +58,7 @@ const AddMeeting = (props) => {
     const AddData = async (values) => {
         try {
             setIsLoading(true);
-            const response = await postApi('api/meeting/create', values);
+            const response = await postApi('api/meeting/add', values);
             if (response.status === 201) {
                 toast.success('Meeting created successfully');
                 formik.resetForm();
@@ -77,10 +77,17 @@ const AddMeeting = (props) => {
         try {
             const response = await getApi('api/user');
             if (response.status === 200) {
-                setUsers(response.data);
+                // Ensure response.data is an array before setting it
+                if (Array.isArray(response.data)) {
+                    setUsers(response.data);
+                } else {
+                    setUsers([]);
+                    console.error('Expected array of users but got:', response.data);
+                }
             }
         } catch (error) {
             console.log(error);
+            setUsers([]);
         }
     };
 
@@ -92,11 +99,11 @@ const AddMeeting = (props) => {
         return selectedItems.map((item) => item._id);
     };
 
-    const usersForAutoComplete = users.map((user) => ({
+    const usersForAutoComplete = Array.isArray(users) ? users.map((user) => ({
         ...user,
         value: user._id,
         label: `${user.firstName} ${user.lastName}`,
-    }));
+    })) : [];
 
     return (
         <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
